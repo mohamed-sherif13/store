@@ -7,10 +7,13 @@ var productscontainerelement = document.getElementById("product");
 var addbtn = document.getElementById("addbtn");
 var updatebtn = document.getElementById("updatebtn");
 var pindex = 0;
+var errorinput = document.getElementById("error");
+/*
  var errorinput = document.getElementById("error");
  var errorpriceinput = document.getElementById("errorprice");
  var errorcategory = document.getElementById("errorcategory");
  var errordes = document.getElementById("errordes");
+ */
 resetproductinput();
 var productlist = [];
 if (localStorage.length > 0) {
@@ -18,23 +21,30 @@ if (localStorage.length > 0) {
     displayelemnt(productlist);
 }
 function addproduct() {
-
-    var product =
+    if(validation(regexname,Productnameinput) &&
+    validation(regexprice,Productpriceinput)&&
+    validation(regexcategory,productcategoryinput)&&
+    validation(regexdesc,Productdescriptioninput)){
+        var product =
     {
         productname: Productnameinput.value,
         productprice: Productpriceinput.value,
         productcategory: productcategoryinput.value,
         Productdescription: Productdescriptioninput.value,
         Productimage: Productimageinput.files[0].name,
-
-
     }
-
     productlist.push(product);
     localStorage.setItem("listproduct", JSON.stringify(productlist))
-
     displayelemnt(productlist);
     resetproductinput();
+    Productnameinput.classList.remove("is-valid");
+    Productpriceinput.classList.remove("is-valid");
+    productcategoryinput.classList.remove("is-valid");
+    Productdescriptioninput.classList.remove("is-valid");
+
+    }else{
+          alert("please fill input");
+    }
 }
 
 
@@ -45,6 +55,7 @@ function resetproductinput() {
     productcategoryinput.value = "Choose Product Category";
     Productdescriptioninput.value = null;
     Productimageinput.value = null;
+   
    
 }
 
@@ -140,23 +151,66 @@ function letupdate(index) {
 
 function updateproduct() {
 
-    var product =
+
+    productlist[pindex].productname =Productnameinput.value;
+    productlist[pindex].productprice= Productpriceinput.value;
+    productlist[pindex].productcategory=productcategoryinput.value;
+    productlist[pindex].Productdescription=Productdescriptioninput.value;
+
+
+    if(Productimageinput.files.length != 0){
+        productlist[pindex].Productimage= Productimageinput.files[0].name;
+
+    }
+   /* var product =
     {
         productname: Productnameinput.value,
         productprice: Productpriceinput.value,
         productcategory: productcategoryinput.value,
         Productdescription: Productdescriptioninput.value,
         Productimage: Productimageinput.files[0].name,
-    }
-    productlist.splice(pindex, 1, product);
-    localStorage.setItem("listproduct", JSON.stringify(productlist));
+    }*/
+
+
+    //productlist.splice(pindex, 1, product);
     displayelemnt(productlist);
+    localStorage.setItem("listproduct", JSON.stringify(productlist));
+   
     resetproductinput();
+    Productnameinput.classList.remove("is-valid");
+    Productpriceinput.classList.remove("is-valid");
+    productcategoryinput.classList.remove("is-valid");
+    Productdescriptioninput.classList.remove("is-valid");
     updatebtn.classList.replace('d-block', 'd-none');
     addbtn.classList.replace('d-none', 'd-block');
 
 }
 
+
+var regexname =/[A-Z][!-}]{4,12}$/;
+var regexprice =/([1-9][0-9][0-9][0-9]|10000)$/;
+var regexcategory =/(Printer|Camera|TV|Lab Top|Mobile Phone)$/;
+var regexdesc =/[!-}]{5,45}$/;
+
+
+function validation(regex,element){
+    
+    if(regex.test(element.value)){
+        element.classList.add("is-valid");
+        element.classList.remove("is-invalid");
+        errorinput.classList.add("d-none");
+        return true;
+    }else 
+    element.classList.add("is-invalid");
+    element.classList.remove("is-valid");
+    errorinput.classList.remove("d-none");
+    return false;
+
+}
+
+
+
+/*
 
 function productnamevalidation(){
     var regex =/[A-Z][!-}]{4,12}$/;
@@ -220,4 +274,4 @@ function productdescriptionvalidation(){
     errordes.classList.replace("d-none","d-block");
     return false;
 
-}
+}*/
